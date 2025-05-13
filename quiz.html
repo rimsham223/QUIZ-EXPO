@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Which ML Model is Your Campus Doppelgänger?</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fefefe;
+      color: #333;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 20px;
+      border: 2px dashed #ccc;
+      border-radius: 12px;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .option-btn, .start-btn {
+      display: block;
+      margin: 10px auto;
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: 1px solid #888;
+      background-color: #f0f0f0;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      width: 100%;
+      max-width: 500px;
+    }
+    .option-btn:hover, .start-btn:hover {
+      background-color: #d8f3dc;
+    }
+    #result {
+      margin-top: 30px;
+      background-color: #e8f5e9;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .model-result {
+      text-align: center;
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .model-name {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #00796b;
+    }
+    .model-desc {
+      font-style: italic;
+      margin: 10px 0;
+    }
+    .model-roast {
+      font-weight: bold;
+      color: #d32f2f;
+    }
+    .restart-btn {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: #00796b;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Welcome Screen -->
+  <div id="welcome-screen">
+    <h1>Which ML Model is Your Campus Doppelgänger?</h1>
+    <p style="text-align: center;">Answer these chaotic questions to discover which machine learning model matches your campus personality through this fun quiz! 😅📚</p>
+    <button class="start-btn" onclick="startQuiz()">Get Started 🚀</button>
+  </div>
+
+  <!-- Quiz Container -->
+  <div id="quiz-container" style="display:none;"></div>
+
+  <!-- Result -->
+  <div id="result"></div>
+
+  <script>
+    // Each option maps to a model (A: Logistic Regression, B: KNN, C: Random Forest, D: XGBoost, E: SVM)
+    const questions = [
+      {
+        question: "Your group project strategy is...",
+        options: [
+          "“Reading the instructions like it's a high-stakes mission.”", // A
+          "“Change the font, change the whole vibe. Thanks for the tip!”", // B
+          "“Just throw everything together and hope for the best.”", // C
+          "“Spent hours making the title look good. The rest? Not so much.”", // D
+          "“Group projects? I prefer to fly solo. disappears”" // E
+        ]
+      },
+      {
+        question: "When the campus café runs out of your usual order...",
+        options: [
+          "“Guess I'll just sulk in silence.”", // A
+          "“What's the most basic drink you have?”", // B
+          "“Time to mix random ingredients and call it a 'creation.'”", // C
+          "“Let's analyze: taste vs. price vs. vibes.”", // D
+          "“Pulls out a homemade meal from my bag like a champ.”" // E
+        ]
+      },
+      {
+        question: "Your phone gallery is mostly...",
+        options: [
+          "“Random screenshots I'll probably never look at again.”", // A
+          "“Me photobombing strangers like it's my thing.”", // B
+          "“A hundred pictures of the same slide because… why not?”", // C
+          "“Tracking sleep and snacks like it's a science project.”", // D
+          "“Three blurry pics of my ceiling. Art, maybe?”" // E
+        ]
+      },
+      {
+        question: "You see someone upset in class. You...",
+        options: [
+          "“Send them good vibes from a distance.”", // A
+          "“Feel more upset than they are. It's a mood.”", // B
+          "“Ask everyone what to do, then do nothing.”", // C
+          "“Okay, emotional support mode activated!”", // D
+          "“Instantly vanish before making eye contact.”" // E
+        ]
+      },
+      {
+        question: "Your mind during exams...",
+        options: [
+          "“True or false. No in-betweens.”", // A
+          "“What would my smartest friend say?”", // B
+          "“Brain just crashed. Total blackout.”", // C
+          "“Answering like I'm on autopilot.”", // D
+          "“Just crickets. Complete silence.”" // E
+        ]
+      },
+      {
+        question: "What annoys you about classmates?",
+        options: [
+          "“Asking questions Google could answer in seconds.”", // A
+          "“Totally missing the vibe of the room.”", // B
+          "“Breathing too loud. Seriously, why?”", // C
+          "“Walking like we have all day to get to class.”", // D
+          "“Just being near me is enough sometimes.”" // E
+        ]
+      },
+      {
+        question: "When plans change suddenly...",
+        options: [
+          "“Good thing I have backup plans ready.”", // A
+          "“I just follow what everyone else does.”", // B
+          "“Here's a bunch of new ideas. You're welcome.”", // C
+          "“Now I'm rethinking everything. Thanks a lot.”", // D
+          "“Plans? I'm the unexpected twist.”" // E
+        ]
+      },
+      {
+        question: "Your class notes look like...",
+        options: [
+          "“The boring version of the textbook.”", // A
+          "“Copied from someone who might know what's up.”", // B
+          "“A colorful mix of doodles and highlights.”", // C
+          "“Detailed to the max. Maybe I overdid it.”", // D
+          "“What notes? I just go with the flow.”" // E
+        ]
+      },
+      {
+        question: "Your study snack is...",
+        options: [
+          "“Anything available. Not the best choice.”", // A
+          "“That one trendy drink everyone loves.”", // B
+          "“A chaotic mix of gummies, chips, and cereal.”", // C
+          "“Almonds because I'm trying to be healthy.”", // D
+          "“A full meal packed from home. Always prepared.”" // E
+        ]
+      },
+      {
+        question: "Assigned a big project, you...",
+        options: [
+          "“Do exactly what's required. Nothing more.”", // A
+          "“Borrow last year's work and hope for the best.”", // B
+          "“Make 50 slides, then panic and cut it down.”", // C
+          "“The bibliography is on point. The project? Not so much.”", // D
+          "“Turn it into a performance. Good luck with that, professor.”" // E
+        ]
+      },
+      {
+        question: "Your life motto is...",
+        options: [
+          "“Rules are my safety net.”", // A
+          "“If everyone's doing it, I'm in. Why not?”", // B
+          "“New vibe for every mood. Gotta keep it fresh.”", // C
+          "“Must optimize everything I do.”", // D
+          "“Alone = peace. People = stress.”" // E
+        ]
+      }
+    ];
+
+    // Model information
+    const models = {
+      'A': {
+        name: "Logistic Regression",
+        description: "You're straightforward and binary in your approach - things are either right or wrong, no in-between.",
+        roast: "You alphabetize your highlighters and color-code your calendar."
+      },
+      'B': {
+        name: "K-Nearest Neighbors (KNN)",
+        description: "You're heavily influenced by those around you, adopting the behaviors and preferences of your peers.",
+        roast: "Your personality is 90% peer-reviewed and 10% panic."
+      },
+      'C': {
+        name: "Random Forest",
+        description: "You contain multitudes - trying many approaches and combining them chaotically.",
+        roast: "Your brain is a browser with 137 tabs open and 12 of them are playing music."
+      },
+      'D': {
+        name: "XGBoost",
+        description: "You're all about optimization and perfection, even when it's not strictly necessary.",
+        roast: "You time your bathroom breaks to maximize productivity."
+      },
+      'E': {
+        name: "Support Vector Machine (SVM)",
+        description: "You maintain clear boundaries and prefer to operate in your own space.",
+        roast: "Your social battery died in 2018 and you never bothered to recharge it."
+      }
+    };
+
+    let currentQuestion = 0;
+    const answers = [];
+    const scores = { A: 0, B: 0, C: 0, D: 0, E: 0 };
+
+    const welcomeScreen = document.getElementById("welcome-screen");
+    const container = document.getElementById("quiz-container");
+    const resultDiv = document.getElementById("result");
+
+    function startQuiz() {
+      welcomeScreen.style.display = "none";
+      container.style.display = "block";
+      showQuestion();
+    }
+
+    function showQuestion() {
+      if (currentQuestion < questions.length) {
+        const q = questions[currentQuestion];
+        let html = `<h2>Q${currentQuestion + 1}: ${q.question}</h2>`;
+        q.options.forEach((opt, idx) => {
+          // Map option index to model key (A-E)
+          const optionKey = String.fromCharCode(65 + idx); // 65 = 'A' in ASCII
+          html += `<button class="option-btn" onclick="selectOption('${optionKey}')">${opt}</button>`;
+        });
+        container.innerHTML = html;
+      } else {
+        showResults();
+      }
+    }
+
+    function selectOption(optionKey) {
+      // Track which model this answer corresponds to
+      scores[optionKey]++;
+      currentQuestion++;
+      showQuestion();
+    }
+
+    function showResults() {
+      container.style.display = "none";
+      
+      // Determine which model got the most votes
+      let maxScore = -1;
+      let resultModel = 'A';
+      for (const [key, score] of Object.entries(scores)) {
+        if (score > maxScore) {
+          maxScore = score;
+          resultModel = key;
+        }
+      }
+      
+      const model = models[resultModel];
+      
+      resultDiv.innerHTML = `
+        <div class="model-result">
+          <div class="model-name">Your ML Doppelgänger: ${model.name}</div>
+          <div class="model-desc">"${model.description}"</div>
+          <div class="model-roast">🔥 Campus Roast: ${model.roast}</div>
+          <button class="restart-btn" onclick="restartQuiz()">Take Quiz Again</button>
+        </div>
+      `;
+    }
+
+    function restartQuiz() {
+      // Reset all quiz state
+      currentQuestion = 0;
+      for (const key in scores) {
+        scores[key] = 0;
+      }
+      resultDiv.innerHTML = '';
+      welcomeScreen.style.display = "block";
+    }
+  </script>
+</body>
+</html>
