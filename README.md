@@ -31,12 +31,6 @@ Each model comes with a description and a humorous roast to keep the experience 
 - CSS
 - JavaScript
 
-## Contributing
-If you would like to contribute to this project, feel free to fork the repository and submit a pull request. Suggestions for new questions or improvements are always welcome!
-
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
 ---
 
 Enjoy the quiz and have fun discovering your ML doppelgänger!
